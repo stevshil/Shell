@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -s https://api.postcodes.io/postcodes/$1 | jq '.'

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+msg="$*"
+
+curl -X POST --data-urlencode "payload={
+  \"channel\": \"#academy_api_testing\", 
+  \"username\": \"Hulk\", 
+  \"text\": \"$msg\", 
+  \"color\": \"warning\",
+  \"icon_url\": \"https://www.searchpng.com/wp-content/uploads/2019/02/Avengers-Logo-PNG-Transparent-Avengers-Logo-715x715.png\"
+}" https://hooks.slack.com/services/RETRIEVEFROMSECRETS

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [[ -z $server ]]
+then
+	if (( $# < 1 ))
+	then
+		echo "SYNTAX: $0 <dockerregHostname>" 1>&2
+		exit 1
+	fi
+	server=$1
+fi
+
+
+curl ${server}:5000/v2/_catalog

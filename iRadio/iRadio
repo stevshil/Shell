@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Check that mpc and mpd are installed
+installmpc=0
+installmpd=0
+
+if [ -e /etc/lsb-release ]
+then
+	installcmd="sudo apt-get -y install "
+else
+	if which dnf >/dev/null 2>&1
+	then
+		installcmd="sudo dnf -y install "
+	else
+		installcmd="sudo yum -y install "
+	fi
+fi
+if ! which mpc >/dev/null 2>&1
+then
+	installmpc=mpc
+fi
+if ! which mpd >/dev/null 2>&1
+then
+	installmpd=mpd
+fi
+if [ "$installmpc" != "0" || "$installmpd" != "0" ]
+then
+	echo "Installing mpc, if prompted enter sudo password"
+	$installcmd mpc mpd
+fi
+
+clear
+
+# Start mpd, requires local configuration
+mpd
+
+# This script uses mpc and mpd to play internet radio
+
+function play()
+{
+	mpc play >/dev/null 2>&1 &
+}
+
+function stop_play()
+{
+	mpc clear -q
+}
+
+function status()
+{
+	mpc current
+}
+
+function volume()
+{
+	mpc volume $1
+}
+
+stationlist=$(awk -F',' '{print $1}' stations)
+
+select station in EXIT STOP SHOW UP DOWN $stationlist
+do
+	if [[ $station == EXIT ]]
+	then
+		mpc clear -q
+		break;
+	fi
+	if [[ $station == STOP ]]
+	then
+		stop_play
+		continue
+	fi
+	if [[ $station == SHOW ]]
+	then
+		status
+		continue
+	fi
+
+	if [[ $station == UP ]]
+	then
+		volume +10
+		continue
+	fi
+
+	if [[ $station == DOWN ]]
+	then
+		volume -10
+		continue
+	fi
+
+	url=$(awk -F',' "\$1 ~ /$station/ { print \$2 }" stations)
+	echo "Playing $station"
+	mpc clear -q
+	mpc add "$url"
+	play
+done
+
+#pkill mpd
+sudo kill -9 $(ps -ef | grep mpd | grep -v grep | awk '{print $2}')

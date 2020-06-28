@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for x in `oc projects | sed '1d' | grep -v '^ *$' | grep -v Using | sed 's/\*//' | sed 's/^ *//' | awk '{print $1}'`
+do
+	echo $x
+	oc get project $x -o yaml | grep requester
+done

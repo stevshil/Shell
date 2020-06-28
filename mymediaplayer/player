@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+from Tkinter import *
+from PIL import ImageTk, Image
+import sys
+import subprocess
+import os
+import signal
+
+global oldtrack
+global newtrack
+oldtrack="abc"
+url='http://mp3channels.webradio.antenne.de/chillout'
+
+def startplayer():
+  os.system('mplayer -slave -input file=myplay -noconsolecontrols -af volnorm=1:0.25 -softvol -volume 4 '+url)
+
+
+startplayer()

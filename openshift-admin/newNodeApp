@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo -n "Please enter the node container: "
+# e.g. docker.io/centos/nodejs-8-centos7
+read buildContainer
+
+echo -n "Please enter node project GIT URL: "
+read gitURL
+
+echo -n "Please enter directory offset if not in repository root: "
+read codeDir
+if echo "$codeDir" | grep '^[ 	]*$' >/dev/null
+then
+  codeDir="."
+fi
+
+echo -n "Please enter name for application: "
+read appName
+
+oc new-app --image-stream=$buildContainer $gitURL --strategy=source --context-dir=$codeDir --name=appName

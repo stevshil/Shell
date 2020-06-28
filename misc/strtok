@@ -1,0 +1,11 @@
+#!/bin/ksh
+
+# String tokeniser
+integer count=1
+
+# The clever bit that puts each letter into an array element
+for x in $(echo $* | sed 's/./& /g')
+do
+	thestr[$count]=$x
+	(( count=count+1 ))
+done

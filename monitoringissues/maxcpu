@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Script to max out CPU on server and make it go slower
+
+numprocs=600
+
+while :
+do
+	while (( $(ps -ef | grep find | grep -v grep | wc -l) < numprocs ))
+	do
+		# Fill up memory and use disk and lots of procs
+		find / -ls >/dev/null 2>/dev/null &
+		find / -ls >/dev/null 2>/dev/null &
+	done
+done

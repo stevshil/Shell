@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Delete a deployment configuratioin and other associated items of the same name
+
+if (( $# < 1 ))
+then
+  echo "SYNTAX: $0 <name>" 1>&2
+  exit 1
+fi
+
+for x in `oc get all | grep $1 | cut -d' ' -f1`
+do 
+  eval $(echo -n "oc delete "; echo $x | awk -F'/' '{print $1,$2}')
+done

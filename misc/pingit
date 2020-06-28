@@ -1,0 +1,14 @@
+#!/bin/ksh
+
+# Replace $ipclass with the starting point of the ip address
+for x in $(cat /etc/hosts | grep '^$ipclass' | awk '{print $1}')
+do
+	echo "Are you there $x ?"
+	ping $x 5 > /dev/null 2>/dev/null
+	if (( $? == 0 ))
+	then
+		echo "I'm here $HOSTNAME!!!"
+	else
+		echo "I need some attention, please help ?"
+	fi
+done

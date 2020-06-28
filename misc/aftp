@@ -1,0 +1,24 @@
+# Replace $system, $user and $password with your own.
+echo "System to connect to: \c"
+read system
+echo "Username: \c"
+read user
+echo "Password: \c"
+stty -echo	# Turn off keyboard screen display
+read password
+stty echo	# Turn keyboard display on
+echo "machine $system	login $user	password $password" > ~/.netrc
+chmod 600 ~/.netrc
+
+sleep 2
+
+ftp $system |&
+
+sleep 2
+
+print -p "cd /tmp"
+print -p "put /tmp/pingit"
+print -p "bye"
+
+
+rm ~/.netrc

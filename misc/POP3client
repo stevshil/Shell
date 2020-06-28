@@ -1,0 +1,43 @@
+#!/bin/ksh
+
+# Function to pass commands to telnet 
+function passinfo
+{
+        sleep 5
+        echo "user $username"
+        sleep 5
+        echo "pass $password"
+        sleep 5
+        echo "list"
+        sleep 3
+        while [[ $msg != quit ]]
+        do
+                print -u2 "Enter message number to view (quit): \c"
+                read msg
+                if [[ $msg != quit ]]
+                then
+                        echo "retr $msg"
+                        print -u2 "Press ENTER to continue"
+                        read
+                else
+                        echo "quit"
+                fi
+        done
+}
+
+# Get user to enter pop login name
+echo "Enter login name: \c"
+read username
+
+# Get users pop password
+echo "Enter Password: \c"
+
+# Turn of screen display so that no one can see password
+stty -echo
+read password
+
+# Turn screen display back on
+stty echo
+ 
+# Start telnet and pass commands
+passinfo | rtelnet yourpopserver.goes.here 110

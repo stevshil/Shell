@@ -1,0 +1,2 @@
+0,30 * * * * /sbin/service feed stop
+15,45 * * * * /sbin/service feed start

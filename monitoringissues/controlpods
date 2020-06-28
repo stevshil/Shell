@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Add the following lines to crontab
+#  0,30 * * * * /home/ec2-user/.controlpods 0
+#  15,45 * * * * /home/ec2-user/.controlpods 1
+
+number=$1
+oc login -u admin -p admin https://appsrvprod.conygre.com:8443
+
+for project in nycautotrader trades
+do
+	/usr/bin/oc project $project
+
+	/usr/bin/oc scale --replicas=$number dc $project
+done

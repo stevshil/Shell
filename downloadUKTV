@@ -1,0 +1,23 @@
+#!/bin/bash -xv
+
+# Just get the page data
+#thepage=$(curl -s 'https://uktvplay.uktv.co.uk/shows/8-out-of-10-cats/watch-online/')
+
+# Process the page data from the variable
+#shows=$(echo "$thepage" | grep video= | grep 8-out | sed 's,^.*href=",,' | sed 's,".*$,,' | sort | uniq)
+
+# Get the shows listed on the page
+if (( $# < 1 ))
+then
+	echo "SYNTAX: $0 <showName>"
+	exit 1
+fi
+program=$1
+
+shows=$(curl -s "https://uktvplay.uktv.co.uk/shows/${program}/watch-online/" | grep video= | grep "${program}" | sed 's,^.*href=",,' | sed 's,".*$,,' | sort | uniq | grep '^/show')
+
+for show in $(echo "$shows")
+do
+	youtube-dl "https://uktvplay.uktv.co.uk${show}" &
+	sleep 300
+done

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+jenkinsServer="ec2-34-240-28-128.eu-west-1.compute.amazonaws.com"
+jenkinsPort="8080"
+if [[ -z $jenkinsPort ]]
+then
+	jenkinsURL=${jenkinsServer}
+else
+	jenkinsURL="${jenkinsServer}:${jenkinsPort}"
+fi
+jobname=$1
+token=$(./getAPIToken)
+
+CRUMB=$(curl -s "http://${jenkinsURL}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)" -u admin:${token})
+
+if ! curl -s -XPOST "http://${jenkinsURL}/job/${jobname}/doDelete" -u admin:${token} -H "$CRUMB" -H "Content-Type:text/xml"
+then
+	echo "Unable to create job"
+	exit 1
+fi

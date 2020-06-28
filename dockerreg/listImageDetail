@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ -z $server ]] || [[ -z $image ]] || [[ -z $tag ]]
+then
+	if (( $# < 3 ))
+	then
+		echo "SYNTAX: $0 <dockerregHostname> <imageName> <tag>" 1>&2
+		exit 1
+	fi
+	server=$1
+	image=$2
+	tag=$3
+fi
+
+#curl -v --silent -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -X GET http://${server}:5000/v2/${image}/manifests/${tag} 2>&1
+curl -v --silent -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -X GET http://${server}:5000/v2/${image}/manifests/${tag} 2>&1 | grep Docker-Content-Digest | awk '{print ($3)}' | grep -v '^$'

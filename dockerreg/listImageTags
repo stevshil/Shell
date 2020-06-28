@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [[ -z $server ]] || [[ -z $image ]]
+then
+	if (( $# < 2 ))
+	then
+		echo "SYNTAX: $0 <dockerregHostname> <imageName>" 1>&2
+		exit 1
+	fi
+	server=$1
+	image=$2
+fi
+
+
+curl ${server}:5000/v2/${image}/tags/list

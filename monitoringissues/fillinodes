@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Create many files to fill up the inode table
+# Add the following to cron;
+# */5 * * * * /pathToFile/fillinodes >/dev/null 2>&1
+
+(
+  [ -d /tmp/.lotsOfFiles ] || mkdir /tmp/.lotsOfFiles
+  cd /tmp/.lotsOfFiles
+
+    x=0
+    while (( x < 100000 ))
+    do
+      touch $(strings /dev/urandom |tr -dc A-Za-z0-9 | head -c20; echo) &
+      (( x = x + 1 ))
+    done
+    #sleep 2
+) &

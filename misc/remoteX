@@ -1,0 +1,24 @@
+#!/bin/ksh
+
+# Shell script that allows a user to run an X windows application
+# on a remote system on their own local machine
+# Usage: remoteX xapp hostname remoteloginname remotepassword
+
+appname=$1
+remotesys=$2
+username=$3
+userpasswd=$4
+
+function remotefunc
+{
+	sleep 3			# Allow for connection
+	echo "$username"	# Supply user's login name
+	sleep 3			# Allow name to be accepted
+	echo "$userpasswd"	# Supply password
+	sleep 3			# Allow time for password to be accepted
+	echo "nohup $appname &"	# Run application
+	sleep 3			# Allow application to start before closing telnet
+}
+
+# Now lets connect
+remotefunc | telnet $remotesys

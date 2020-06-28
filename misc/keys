@@ -1,0 +1,12 @@
+# This script allows you to use cursor keys in ksh
+# run using -->  . keys
+
+# Ensure that ^P, ^N, ^B and ^F are actual control characters
+# To get the control character in use
+# CTRL+V in insert mode of vi and then press the e.g., CTRL+P
+alias __A=^P	# Up
+alias __B=^N	# Down
+alias __D=^B	# Left
+alias __C=^F	# Right
+
+set -o emacs

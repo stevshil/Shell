@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if (( $# < 1 ))
+then
+	echo "SYNTAX: $0 <city|postcode>" 1>&2
+	exit 1
+fi
+
+if echo "$1" | egrep '^[a-zA-Z]{3,}$'
+then
+	echo "Using city name"
+	woeid=$(curl -s https://www.metaweather.com/api/location/search/?query=$1 | jq -r '.[].woeid')
+else
+	echo "Using postcode"
+	pcodedata="$(curl -s https://api.postcodes.io/postcodes/$1)"
+	long=$(echo "$pcodedata" | jq -r '.result | .longitude')
+	lat=$(echo "$pcodedata" | jq -r '.result | .latitude')
+	echo "Long: $long - Lat: $lat"
+	woeid=$(curl -s https://www.metaweather.com/api/location/search/?lattlong=${lat},${long})
+	echo $woeid | jq '.'
+fi
+
+curl -s https://www.metaweather.com/api/location/${woeid}/ | jq '.consolidated_weather[] | {"State": .weather_state_name, "Wind Dir": .wind_direction_compass, "Applicable": .applicable_date, "min_temp": .min_temp, "max_temp": .max_temp, "Current": .the_temp,"humidity": .humidity,"predictability": .predictability, "latt_long": .latt_long}'

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if (( $# < 3 ))
+then
+	echo "SYNTAX: $0 <dockerregHostname> <imageName> <sha256value>" 1>&2
+	exit 1
+fi
+
+server=$1
+image=$2
+shavalue=$3
+
+curl -v --silent -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -X DELETE http://${server}:5000/v2/${image}/manifests/sha256:${shavalue}
+

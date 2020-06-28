@@ -1,0 +1,5 @@
+server=dockerreg.conygre.com
+image=openshift/docker
+tag=latest
+
+export server image tag

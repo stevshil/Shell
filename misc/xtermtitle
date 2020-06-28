@@ -1,0 +1,34 @@
+This document tells you different ways of putting values into the title bar of an X-Terminal window.
+
+
+Using the Bourne Again Shell (bash):
+
+
+echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"
+
+
+Displays the Username, hostname and current working directory in the title bar.
+
+\033 is the escape code for ESCAPE and \007 is for the BELL.
+
+
+The following produces a prompt of bash$ , and an xterm title of username@hostname: directory:
+
+PS1="\[\033]0;\u@\h: \w\007\]bash\\$ "
+
+
+
+
+Using the Korn Shell (ksh):
+
+Dynamic prompt to update title bar;
+
+PS1='^[]0;${USER}@${HOST}: ${PWD}^Gksh$ '
+
+
+
+
+Using the C Shell (csh):
+
+set host=`hostname`
+alias cd 'cd \!*; echo -n "^[]0;${user}@${host}: ${cwd}^Gcsh% "'

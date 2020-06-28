@@ -1,0 +1,19 @@
+# This script will search files using strings and grep
+# Its job is to report on files
+
+search=$1
+filename=$2
+
+if [ "$#" = "1" ]
+then
+	filename='*'
+fi
+
+for x in $filename
+do
+	var=$(strings $x | grep -i $search)
+	if [ $? -eq 0 ]
+	then
+		echo $x
+	fi
+done

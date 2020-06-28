@@ -1,0 +1,40 @@
+#!/usr/bin/ksh
+
+# This is a sample program for Annette.
+# To look for lines containing CALL statement and to read the lines before it.
+
+# Let's start by reading the file in upto the first CALL statement.
+# We will store it in an array, and then think what to do with it later.
+
+integer x=0
+integer z=0
+FILE=test2.data
+OUTFILE=newfile
+
+cat $FILE | while read -r line		# Read in the file line by line to end
+do
+	array[x]="$line"	# Assign each line to an array index
+
+	if [[ $line = *CALL*DMYCON* ]]	# Look for the line CALL in it
+	then
+		# Evaluate lines prior to this for a MOVE YY
+		while (( z <= ((${#array[@]}-1)) ))
+		do
+			print ${array[z]}	# Print out lines for newfile
+			if [[ ${array[z]} = *YY* ]]	# Locate YY line
+			then
+				# Print out the XCENT line to newfile
+				print - "MOVE XCENT,CC"
+			fi
+			((z=z+1))	# Increment index of array for next line
+		done
+	fi
+	((x=x+1))	# Increment main index
+done > $OUTFILE
+
+# OUTFILE and FILE variables could be changed to $1 and $2 so that you can use
+# command line parameters as input and output file.
+# Alternatively, you could get it to write to a temporary file and then move
+# back to the original file.
+# This program will however allow lines to be changed as you feel necessary.
+# Its a form of sed

@@ -1,0 +1,27 @@
+#!/bin/ksh
+
+function spamit
+{
+	sleep 5
+	echo "HELO hotmail.com"
+	sleep 2
+	echo "MAIL FROM: hotlips@hotmail.com"
+	sleep 2
+	echo "RCPT TO: $1"
+	sleep 2
+	echo "DATA"
+	sleep 2
+	echo "Welcome to hotmail, the slowest mail system in the world"
+	sleep 2
+	echo "Please reply to join"
+	sleep 2
+	echo "."
+	sleep 2
+	echo "quit"
+}
+
+# Change $ipadd to the start of you ip address
+for x in $(cat /etc/hosts | grep '^$ipadd' | cut -d'	' -f3)
+do
+	spamit $x | telnet $x 25
+done

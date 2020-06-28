@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Add shared storage back into OpenShift
+# Available storage for persistent volumes should not be deleted
+# If you do delete then run this script
+
+# NOTE: you need to know where your shared storage is located
+# This script only does local, /openshift/pvdir
+
+echo "Please enter size of each PV (100Gi): "
+read SIZE
+
+echo "Please enter directory location: "
+read PVDIR
+
+# Create 100 available slots
+for x in $(seq -w 0001 0100)
+do
+        sed -e "s/PVNAME/pv${x}/g" i-e "s/SIZE/${SIZE}/" PV.json | oc create -f -
+done
+

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if (( $# < 1 ))
+then
+	echo "SYNTAX: $0 <elkHost> [<year> <month>]" 1>&2
+	exit 1
+fi
+
+OLDIFS="$IFS"
+IFS='^A'
+
+elkhost=$1
+curl -s ${elkhost}:9200/_cat/indices

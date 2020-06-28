@@ -1,0 +1,16 @@
+#!/bin/bash
+  
+# Process to start lots of listening connections to fill up ports
+
+(
+    x=1024
+    while (( $(netstat -t | wc -l) < 2000 ))
+    do
+        if ! nc -zw 3 localhost $x
+        then
+                nc -kl localhost $x &
+        fi
+        (( x=x+1 ))
+    done
+) &
+

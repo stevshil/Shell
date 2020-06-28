@@ -1,0 +1,30 @@
+#!/usr/bin/ksh
+
+# Program for inserting a line of text anywhere in a file.
+# The program useage is as follows;
+# insertit "user defined string" linenotoinsertafter filename
+
+if (( $# < 3 ))
+then
+	print -u2 'ERROR: useage is -  insertit "user string" lineno filename'
+	exit 1
+fi
+
+string="$1"
+filename=$3
+tmpfile=/tmp/$LOGNAME.insertit
+typeset -i lineno=$2
+typeset -i counter=0
+
+rm $tmpfile
+
+cat $filename | while read -r line
+do
+	if ((counter != $lineno))
+	then
+		print - "$line" >> $tmpfile
+	else
+		print - "$1" >> $tmpfile
+	fi
+	((counter=counter+1))
+done

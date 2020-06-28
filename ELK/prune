@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if (( $# < 1 ))
+then
+	echo "SYNTAX: $0 <elkHost> [<year> <month>]" 1>&2
+	echo "SYNTAX: $0 <elkHost> [<indexname> [<year> <month>]]" 1>&2
+	exit 1
+fi
+
+elkhost=$1
+
+if (( $# == 4 ))
+then
+	CAT=$2
+	YEAR=$3
+	MONTH=$4
+	echo "Deleting ${CAT} ${YEAR}.${MONTH}"
+	data=$(curl -s ${elkhost}:9200/_cat/indices | grep "${CAT}.*-${YEAR}\.${MONTH}\.")
+elif (( $# == 3 ))
+then
+	YEAR=$2
+	MONTH=$3
+	echo "Deleting ${YEAR}.${MONTH}"
+	data=$(curl -s ${elkhost}:9200/_cat/indices | grep "${YEAR}\.${MONTH}\.")
+elif (( $# == 2 ))
+then
+	CAT=$2
+	echo "Deleting ${CAT}"
+	data=$(curl -s ${elkhost}:9200/_cat/indices | grep "${CAT}")
+else
+	echo "Listing indices"
+	data=$(curl -s ${elkhost}:9200/_cat/indices)
+fi
+
+OLDIFS="$IFS"
+IFS=$'\n'
+
+for x in $(echo "${data}")
+do
+	id=$(echo "$x" | awk '{print $3}')
+  	echo "Deleting data $id"
+  	curl -s -XDELETE "http://${elkhost}:9200/${id}"
+done

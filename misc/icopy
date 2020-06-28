@@ -1,0 +1,52 @@
+#!/bin/bash
+
+echo "Number of args: $#"
+if (( $# < 2 ))
+then
+  echo "I need 2 arguments to work"
+  exit 1
+fi
+
+src=$1
+dest=$2
+
+if [[ ! -r $src ]] # test -r $src
+then
+  echo "The $src is not readable"
+  exit 2
+fi
+
+# The directory that you are copying the destination to is writeable
+if [[ -d $dest ]]
+then
+  dest=$dest/$(basename $src)
+fi
+
+if [[ ! -w $(dirname $dest) ]]
+then
+  echo "Directory $(dirname $dest) is not writeable"
+  exit 3
+fi
+
+# Check to see if the destination file already exists
+if [[ -e $dest ]] && [[ ! -w $dest ]]
+then
+  echo "$dest exists and is not writeable"
+  exit 4
+fi
+
+if [[ -e $dest ]]
+then
+  echo -n "$dest exists would you like to overwrite (y/n)? "
+  read over
+  case $over in
+    [yY]*) cp $src $dest
+           ;;
+    [nN]*) echo "Files not copied"
+           ;;
+    *)     echo "Unknown response, so exiting without copying"
+           ;;
+  esac
+else
+  cp $src $dest
+fi

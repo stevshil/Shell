@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Run in your docker container
+
+docker exec -it registry bin/registry garbage-collect  /etc/docker/registry/config.yml

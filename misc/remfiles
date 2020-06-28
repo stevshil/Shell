@@ -1,0 +1,185 @@
+#!/bin/ksh
+
+# Program to remove files between set dates
+# Syntax:  remfiles.sh directory startdate enddate
+# Exit state 4 = something wrong with day
+# Exit state 5 = something wrong with month
+# Exit state 6 = something wrong with year
+
+
+function main
+{
+	TMPSTART="/tmp/start$$"		# File for use with find
+	TMPEND="/tmp/end$$"			# File for use with find
+	TMPFILE="/tmp/${LOGNAME}$$"	# Temporary storage
+	startdate="$1"
+	enddate="$2"
+	filename="$3"
+
+	trap "rm $TMPSTART $TMPEND $TMPFILE" INT QUIT TERM
+
+	# Check that file name is not a date
+	if [[ "$filename" == ??/??/???? ]]
+	then
+		print -u2 "Starting directory not specified!"
+		print -u2 "Usage: $0 directory startdate enddate"
+		print -u2 "Date format: mm/dd/yyyy"
+		exit 1
+	fi
+
+	# Firstly see if user has entered filenames on cmd line
+
+	if [[ -z $enddate && -z $startdate ]]
+	then
+		enterdates 0
+	elif [[ $# == 1 ]]
+	then
+		enterdates 1
+	fi
+
+	# Check that the dates are valid
+	checkdateformat $startdate $enddate
+
+	# Check that we have a starting directory
+	if [[ -z $filename ]]
+	then
+		print -u2 "No starting directory!"
+		print -- "Press enter for /, or enter full path to directory: \c"
+		read filename
+		if [[ -z $filename ]]
+		then
+			filename=/
+		fi
+	fi
+
+	# Now Let's do the hard bit
+	# Get those files which are newer than start date
+	# Create a temporary file that has a mod-date of startdate
+	OLDIFS="$IFS"
+	IFS=/
+	set -A tmpdate $startdate
+	# format to 'touch -t MMDDhhmmCCYY'
+	touch -t ${tmpdate[0]}${tmpdate[1]}0000${tmpdate[2]} "$TMPSTART"
+
+	set -A tmpdate $enddate
+	touch -t ${tmpdate[0]}${tmpdate[1]}0000${tmpdate[2]} "$TMPEND"
+
+	IFS="$OLDIFS"
+
+	# find files newer than start date
+	find $filename -type f -newer $TMPSTART -user $LOGNAME -print > "$TMPFILE"
+	find $filename -type f -newer $TMPEND -user $LOGNAME -print >> "$TMPFILE"
+
+	# Now sort the file into order
+	sort $TMPFILE > "$TMPSTART"
+
+	# Remove duplicate to leave us with those files
+	# which have been modified between the specified dates
+	uniq -u $TMPSTART $TMPFILE
+	${EDITOR:-vi} $TMPFILE
+
+	more $TMPFILE	# Replace with rm for real usage
+	sleep 1
+	rm $TMPSTART $TMPEND $TMPFILE
+	
+}
+
+function enterdates
+{
+	if [[ $1 == 0 ]]
+	then
+		print -- "Please enter Start Date (mm/dd/yyyy): \c"
+		read startdate
+		if [[ -z $startdate ]]
+		then
+			print -u2 "No date entered. ABORTING"
+		fi
+
+		print -- "Please enter End Date (mm/dd/yyyy): \c"
+		read enddate
+		if [[ -z $enddate ]]
+		then
+			print -u2 "No date entered. ABORTING"
+		fi
+	else
+		print -- "You have entered only one date!"
+		print -- "Please select date you have not entered:-"
+
+		select entered in startdate enddate QUIT
+		do
+			case $entered in
+				startdate )	print -- "Please enter start date (mm/dd/yyyy): \c"
+						enddate="$startdate"
+						read startdate
+						break;
+						;;
+				enddate )	print -- "Please enter end date (mm/dd/yyyy): \c"
+						read enddate
+						break;
+						;;
+				QUIT )		exit 1
+						;;
+			esac
+		done
+	fi
+}
+
+function checkdateformat
+{
+	OLDIFS="$IFS"
+	IFS=/
+
+	for datein in "$1" "$2"
+	do
+		# Split date in to dd mm yy into array elements
+		set -A thedate $datein
+	
+		# Now check for valid day
+		if (( ${thedate[0]} <= 0 )) || (( ${thedate[0]} >= 13 ))
+		then
+			print -u2 "Invalid month entry"
+			exit 5
+		fi
+		if (( ${thedate[1]} <= 0 )) || (( ${thedate[1]} >= 32 ))
+		then
+			print -u2 "Invalid day entry"
+			exit 4
+		fi
+		if (( ${thedate[2]} <= 1900 ))
+		then
+			print -u2 "Invalid year entry"
+			exit 6
+		fi
+	done
+
+	# Make sure that Start is less than end
+	set -A sdate $1
+	set -A edate $2
+
+	if (( ${sdate[2]} > ${edate[2]} ))
+	then
+		print -u2 "Start date is more recent than end date!"
+		print -u2 "Check Year!"
+		exit 6
+	fi
+	if (( ${sdate[2]} == ${edate[2]} )) && (( ${sdate[0]} > ${edate[0]} ))
+	then
+		print -u2 "Start date is more recent than end date!"
+		print -u2 "Check Month!"
+		exit 5
+	fi
+	if (( ${sdate[2]} == ${edate[2]} )) && (( ${sdate[0]} == ${edate[0]} )) && (( ${sdate[1]} > ${edate[1]} ))
+	then
+		print -u2 "Start date is more recent than end date!"
+		print -u2 "Check Day!"
+		exit 4
+	fi
+
+	IFS="$OLDIFS"
+}
+
+startdate="$2"
+enddate="$3"
+filename="$1"
+
+main "$startdate" "$enddate" "$filename"

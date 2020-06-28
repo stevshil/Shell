@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# https://xkcd.com/json.html
+
+# Get current comic
+curl https://xkcd.com/info.0.json
+
+# Get specific comic
+curl https://xkcd.com/614/info.0.json
+

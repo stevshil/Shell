@@ -1,0 +1,3 @@
+Online JBCrypt URL to generate passwords for Jenkins
+
+https://www.dailycred.com/article/bcrypt-calculator
