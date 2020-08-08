@@ -1,0 +1,8 @@
+https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/
+
+https://kubernetes.io/docs/concepts/storage/storage-classes/#local
+https://www.ibm.com/support/knowledgecenter/SS6JWS_3.5.0/UG/sc_ug_config_storage_class_pvc.html
+
+https://kubernetes.io/blog/2019/04/04/kubernetes-1.14-local-persistent-volumes-ga/
+https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+https://stackoverflow.com/questions/60988966/local-persistentvolumeclaim-says-no-volume-plugin-matched

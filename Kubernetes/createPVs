@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Script used to create associated storage for Dynamic Volume Allocation
+# Dynamic PVs only work if there is backed storage, they don't create it
+# You need PVs behind the Storage Class, unless in GCP, AWS, etc
+
+if (( $# < 2 ))
+then
+	echo "SYNTAX: $0 <size[Gi|Mi]> <numberOf>" 1>&2
+	exit 1
+fi
+
+counter=1
+maxpvs=$2
+pvsize=$1
+template=$(cat pv.yaml.tmplt)
+
+while (( counter <= maxpvs ))
+do
+	if (( ${#counter} < 2 ))
+	then
+		number="000${counter}"
+	elif (( ${#counter} < 3 ))
+	then
+		number="00${counter}"
+	elif (( ${#counter} < 4 ))
+	then
+		number="0${counter}"
+	else
+		number="${counter}"
+	fi
+
+	eval echo "\"$template"\"
+	(( counter = counter + 1 ))
+done
