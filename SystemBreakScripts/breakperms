@@ -2,3 +2,6 @@
 
 ls -ld /var/lib/mysql /var/lib/moodledb >>/var/tmp/dirperms
 chmod 000 /var/lib/mysql /var/lib/moodledb
+service mariadb restart
+docker stop mysql
+docker start mysql
