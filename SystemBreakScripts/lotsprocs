@@ -1,0 +1,12 @@
+#!/bin/bash
+
+count=0
+while :
+do
+        if (( $(ps -ef | grep find | wc -l) < 150 ))
+        then
+                find / >>/var/log/findme 2>&1 &
+        else
+                sleep 30
+        fi
+done

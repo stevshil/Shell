@@ -1,0 +1,6 @@
+#!/bin/bash
+
+service mariadb stop
+docker stop moodledb
+nohup nc -kl localhost 3306 &
+nohup nc -kl localhost 3316 &
