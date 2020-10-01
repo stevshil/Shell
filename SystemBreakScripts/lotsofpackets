@@ -1,0 +1,10 @@
+#!/bin/bash
+
+count=0
+echo $count >count
+while (( count < 10000 ))
+do
+        (( count = $(cat count) ))
+        ((count=count+1))
+        curl appgradsbf.eu.conygre.com >/dev/null 2>&1 &
+done

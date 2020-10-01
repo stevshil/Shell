@@ -1,0 +1,24 @@
+#!/bin/bash -xv
+
+if [[ ! -d x ]]
+then
+        mkdir x
+        cd x
+else
+        cd x
+fi
+
+counter=1
+echo $counter >countfile
+#while (( $(ls | wc -l) < 3000000 ))
+while (( $(cat countfile) < 3000000 ))
+do
+        x=$(cat countfile)
+        ((counter = $(cat countfile) + 2000))
+        echo $counter >countfile
+        (while (( x < $counter ))
+        do
+                touch a$x
+                ((x=x+1))
+        done) &
+done
