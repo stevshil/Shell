@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Calculate the bitrate you need by dividing your target size (in bits) by the video length (in seconds). For example for a target size of 1 GB (one gigabyte, which is 8 gigabits) and 10 000 seconds of video (2 h 46 min 40 s), use a bitrate of 800 000 bit/s (800 kbit/s)
+
+# Get video duration
+duration=$(ffmpeg -i The\ Broken\ Hearts\ Gallery.mkv 2>&1 | grep 'Duration:' | awk '{print $2}' | sed 's/,//')
+vidhr=$(echo "$duration" | awk -F: '{print int($1*3600)}')
+vidmin=$(echo "$duration" | awk -F: '{print int($2*60)}')
+vidsec=$(echo "$duration" | awk -F: '{print int($3)}')
+if [[ $DEBUG == 1 ]]
+then
+	echo "Duration: $duration"
+	echo "VIDHR: $vidhr"
+	echo "VIDMIN: $vidmin"
+	echo "VIDSEC: $vidsec"
+fi
+videosecs=$(echo "" | awk "{print $vidhr+$vidmin+$vidsec}")
+
+echo "Video length in Seconds: $videosecs"
+#echo -n "Enter length of video in seconds: "
+#read videosecs
+if (( $# < 2 ))
+then
+	echo -n "Enter target size in MB: "
+	read size
+	((size=size*(8*1000)))
+else
+	((size=$2*(8*1000)))
+fi
+echo "Size required: $size bytes"
+echo -n "Is this OK (y/n): "
+read response
+if [[ $response == n* ]]
+then
+	exit 1
+fi
+
+bitrate=$(echo "" | awk "{print int($size/($videosecs))}")
+
+ffmpeg -i "$1" -b ${bitrate}k shrunk-"$1"
+

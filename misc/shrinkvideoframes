@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#ffmpeg -i input.avi -fs 400M output.avi
+
+#ffmpeg -i input.mp4 -vcodec libx265 -crf 20 output.mp4
+
+if (( $# < 1 ))
+then
+	echo -n "Enter scale (2-10): "
+	read scale
+fi
+
+ffmpeg -i "$1" -vf "scale=iw/${scale}:ih/${scale}" "small-$1"
+
