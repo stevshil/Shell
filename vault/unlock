@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Unlock the vault for use
+
+if [[ $(./vault status | grep '^Sealed' | awk '{print $2}') != "true" ]]
+then
+	echo "Vault is already unsealed"
+else
+	# Now unseal vault
+	keys=$(./getkeys)
+	while [[ $(./vault status | grep '^Sealed' | awk '{print $2}') == "true" ]]
+	do
+		useline=$( shuf -i 1-5 -n1 )
+		key=$(echo "$keys" | head -$useline | tail -1)
+		echo "$key"
+		#./vault operator unseal $key >/dev/null
+		curl -sk -X PUT -d "{\"key\": \"$key\"}" $VAULT_ADDR/v1/sys/unseal
+	done
+
+	echo "Vault unsealed"
+fi

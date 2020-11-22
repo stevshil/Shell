@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Get the unseal keys
+
+if (( $# < 1 ))
+then
+	echo "$0 <s3BucketName>" 1>&2
+	exit 1
+fi
+
+s3Bucket=$1
+
+aws s3 cp s3://${s3Bucket}/vault/keys keys >/dev/null
+
+grep -i unseal keys | awk '{print $4}'
+
+rm keys

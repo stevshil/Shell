@@ -23,9 +23,9 @@ if (( $# < 2 ))
 then
 	echo -n "Enter target size in MB: "
 	read size
-	((size=size*(8*1000)))
+	((size=size*(6*1000)))
 else
-	((size=$2*(8*1000)))
+	((size=$2*(6*1000)))
 fi
 echo "Size required: $size bytes"
 echo -n "Is this OK (y/n): "

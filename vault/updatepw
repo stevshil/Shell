@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Script to rotate password daily
+
+./unlock >/dev/null
+./vault kv put secret/steve password="$(openssl rand -base64 32)"
+./vault operator seal
