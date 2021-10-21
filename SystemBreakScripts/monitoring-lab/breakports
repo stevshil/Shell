@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /var/lib/jenkins/workspace/Build\ Projects/containers
+docker-compose stop database
+nohup nc -kl localhost 3306 &
+nohup nc -kl localhost 3316 &

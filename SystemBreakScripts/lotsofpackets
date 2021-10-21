@@ -1,5 +1,8 @@
 #!/bin/bash
 
+hotsurl="$1"
+
+(
 count=0
 echo $count >count
 while (( count < 10000 ))
@@ -7,5 +10,6 @@ do
         (( count = $(cat count) ))
         ((count=count+1))
 	echo $count > count
-        curl appgradsbf.eu.conygre.com >/dev/null 2>&1 &
+        curl $hosturl >/dev/null 2>&1 &
 done
+) &
